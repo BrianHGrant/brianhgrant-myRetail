@@ -1,32 +1,49 @@
+import logging
 import os
 from flask import Flask, jsonify
 from flask_pymongo import PyMongo
 
 from redskyclient import RedSkyClient
+from db import get_price, update_price_db, create_price_db
 
 
 app = Flask(__name__)
-app.config["MONGO_URI"] = 'mongodb://' + os.environ['MONGODB_USERNAME'] + ':' + os.environ['MONGODB_PASSWORD'] + '@' + os.environ['MONGODB_HOSTNAME'] + ':27017/' + os.environ['MONGODB_DATABASE']
-mongo = PyMongo(app)
-
-db = mongo.db
-prices = db.prices
+app.config["MONGO_URI"] = os.environ['MONGODB_CONNSTRING']
 redskyclient = RedSkyClient()
 
 
 @app.route('/product/<int:id>', methods=['GET'])
 def get_product(id):
     try:
-        product = redskyclient.get_product(id)["data"]["product"]
+        response = redskyclient.get_product(id)
+        product = response["data"]["product"]
+        price = get_price(id)
         return jsonify(
                         {
                             "id": product["tcin"],
                             "title": product["item"]['product_description']['title'],
                             "current_price": {
-                                "value": 13.49,
-                                "currency_code": "USD"
+                                "value": price['value'],
+                                "currency_code": price['currency_code']
                             }
                         },
                     ), 200
     except KeyError:
-        return jsonify({"error": "Not Found"}), 404
+        if response['status_code'] == 404:
+            return jsonify({"error": "Not Found"}), 404
+
+
+# @app.route('/product/<int:id>/price', methods=['PUT'])
+# def update_price(id):
+#     try:
+#         update_price_db(id, price=20.54)
+#     except Exception as e:
+#         return jsonify({'error': str(e)}), 400
+
+
+# @app.route('/product/<int:id>/price', methods=['POST'])
+# def create_price(id):
+#     try:
+#         create_price_db(id, price=20.54)
+#     except Exception as e:
+#         return jsonify({'error': str(e)}), 400

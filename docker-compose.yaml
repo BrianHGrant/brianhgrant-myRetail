@@ -9,25 +9,29 @@ services:
       - run
       - --host=0.0.0.0
     environment:
-      FLASK_DEBUG: 1
-      FLASK_APP: ./app.py
-      APP_PORT: 5000
-      MONGODB_DATABASE: flaskdb
-      MONGODB_USERNAME: flaskuser
-      MONGODB_PASSWORD: your_mongodb_password
-      MONGODB_HOSTNAME: mongodb
-    ports: ['8000:5000']
+      - FLASK_DEBUG
+      - APP_PORT=FLASK_APP_PORT
+      - MONGODB_USERNAME=${MONGODB_USERNAME}
+      - MONGODB_PASSWORD=${MONGODB_PASSWORD}
+      - MONGODB_DATABASE
+      - MONGODB_CONNSTRING=mongodb://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@mongodb:27017/${MONGODB_DATABASE}?authSource=admin
+    ports:
+      - '8000:${FLASK_APP_PORT}'
     volumes: ['./api:/app']
     depends_on:
       - mongodb
   mongodb:
     image: mongo:6.0.1
     restart: unless-stopped
+    hostname: mongodb
     container_name: mongodb
     environment:
-      MONGO_INITDB_ROOT_USERNAME: mongodbuser
-      MONGO_INITDB_ROOT_PASSWORD: your_mongodb_root_password
-      MONGO_INITDB_DATABASE: flaskdb
-      MONGODB_DATA_DIR: /data/db
-      MONDODB_LOG_DIR: /dev/null
-    volumes: ['./mongodbdata:/data/db']
+      - MONGO_INITDB_ROOT_USERNAME=${MONGODB_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGODB_PASSWORD}
+      - MONGO_INITDB_DATABASE=${MONGO_INITDB_DATABASE}
+      - MONGODB_DATA_DIR='/data/db'
+      - MONDODB_LOG_DIR='/dev/null'
+    volumes:
+      - ./mongodb/init-db.js:/docker-entrypoint-initdb.d/init-db.js:ro
+    ports:
+      - 27017:27017

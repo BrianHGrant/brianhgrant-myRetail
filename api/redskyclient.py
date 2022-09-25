@@ -14,10 +14,10 @@ class RedSkyClient:
         if response.status_code in range(200, 300):
             return response.json()
         elif response.status_code in range(400, 500):
-            return {}
+            return {"status_code": response.status_code}
         elif response.status_code in range(500, 600):
             if retry >= 5:
-                return {}
+                return {"status_code": response.status_code}
             retry += 1
             time.sleep(2**retry)
             self.get_product(self, id, retry=retry)
