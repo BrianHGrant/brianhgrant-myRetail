@@ -67,7 +67,7 @@
 							"        \"current_price\": { ",
 							"            \"type\": \"object\",",
 							"            \"properties\": {",
-							"              \"value\": { \"type\": \"number\" },",
+							"              \"value\": { \"type\": \"string\" },",
 							"              \"currency_code\": { \"type\": \"string\" }",
 							"            }",
 							"        },",
