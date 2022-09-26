@@ -83,5 +83,6 @@ This API is not currently production ready. A few things to note on productioniz
 * implement circut breakers between services (ie calls to redsky api)
 * requests to internal apis currently sent over public http
 * cache data from db + redsky apis
+* background workers?
 * strengthen testing + unit tests
 * ci/cd deploy chain
