@@ -26,14 +26,6 @@ def resource_not_found(e):
     return jsonify(error=str(e)), 404
 
 
-@app.errorhandler(DuplicateKeyError)
-def duplicate_resource_found(e):
-    """
-    An error-handler to ensure that MongoDB duplicate key errors are returned as JSON.
-    """
-    return jsonify(error=f"Duplicate key error."), 400
-
-
 @app.route('/product/<int:id>', methods=['GET'])
 def get_product(id):
     try:
