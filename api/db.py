@@ -1,9 +1,6 @@
-import bson
 from flask import current_app, g
 from werkzeug.local import LocalProxy
 from flask_pymongo import PyMongo
-from pymongo.errors import DuplicateKeyError, OperationFailure
-from bson import ObjectId
 
 
 def get_db():
@@ -28,26 +25,22 @@ def get_price(product_id):
         return e
 
 
-def update_price_db(product_id, price=None, currency_code=None):
-    if price is None and currency_code is None:
+def update_price_db(product_id, data):
+    filter = {'product_id': product_id}
+
+    if "value" not in data.keys() and "currency_code" not in data.keys():
         return
-    elif price is not None and currency_code is None:
-        response = db.prices.update_one(
-            {"product_id": product_id},
-            {"$set": {"value ": price}}
-        )
-    elif price is None and currency_code is not None:
-        response = db.prices.update_one(
-            {"product_id": product_id},
-            {"$set": {"currency_code ": currency_code}}
-        )
-    # error handling
-    return response
-
-
-def create_price_db(product_id, price, currency_code='USD'):
-    price = {'product_id': product_id, 'value': price, 'currency_code': currency_code}
-    response = db.prices.insert_one(price)
-    print(response)
-
-    return response
+    elif "value" in data.keys() and "currency_code" not in data.keys():
+        update_set = {"$set": {"value": data["value"]}}
+    elif "value" not in data.keys() and "currency_code" in data.keys():
+        update_set = {"$set": {"currency_code": data["currency_code"]}}
+    elif "value" in data.keys() and "currency_code" in data.keys():
+        update_set = {"$set": {
+            "value": data["value"],
+            "currency_code": data["currency_code"]}}
+    try:
+        result = db.prices.update_one(filter, update_set)
+        return result
+    except Exception as e:
+        print(str(e))
+        return e

@@ -1,6 +1,6 @@
 import logging
 import os
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_pymongo import PyMongo
 from pymongo.errors import DuplicateKeyError
 
@@ -59,17 +59,18 @@ def get_product(id):
 def ping():
     return jsonify(hello='in there'), 200
 
-# @app.route('/product/<int:id>', methods=['PUT'])
-# def update_price(id):
-#     try:
-#         update_price_db(id, price=20.54)
-#     except Exception as e:
-#         return jsonify({'error': str(e)}), 400
 
-
-# @app.route('/product/<int:id>/price', methods=['POST'])
-# def create_price(id):
-#     try:
-#         create_price_db(id, price=20.54)
-#     except Exception as e:
-#         return jsonify({'error': str(e)}), 400
+@app.route('/product/<int:id>', methods=['PUT'])
+def update_price(id):
+    content_type = request.headers.get('Content-Type')
+    if (content_type == 'application/json'):
+        data = request.json
+    else:
+        return 'Content-Type not supported!'
+    try:
+        if get_price(id) is None:
+            return jsonify(error="Not Found"), 404
+        update_price_db(id, data)
+        return get_product(id)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400

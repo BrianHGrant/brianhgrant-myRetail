@@ -109,6 +109,73 @@
 			"response": []
 		},
 		{
+			"name": "product/{id} - PUT",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "d2b10a98-a0b2-41c0-a4bc-bae1fdc0205d",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"",
+							"pm.test(\"Content-Type is present\", function () {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"});",
+							"",
+							"",
+							"pm.test(\"Your test name\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData[\"current_price\"][\"value\"]).to.eql('20.88');",
+							"    pm.expect(jsonData[\"current_price\"][\"currency_code\"]).to.eql('USD');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"value\": \"20.88\",\n\t\"currency_code\": \"USD\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{HOST}}/product/:id",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"product",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "13860428"
+						}
+					]
+				},
+				"description": "Gets a product's title and pricing info by id\n"
+			},
+			"response": []
+		},
+		{
 			"name": "product/{id} - GET (Not Found)",
 			"event": [
 				{
