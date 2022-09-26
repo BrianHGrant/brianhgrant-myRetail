@@ -31,6 +31,14 @@ To run:
 params: id (int)  
 return: product.json  
 
+* PUT `/products/{id}`  
+params: id (int)
+body: {
+    "value": (string)
+    "currency_code": (string)
+} 
+return: product.json 
+
 * GET `/ping`  
 params: None
 return: ping.json 
