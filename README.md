@@ -4,7 +4,7 @@ Products API for MyRetail Store
 
 ## About
 
-API returns product and pricing info. Uses Flask(python) and MongoDB on backend. 
+API returns product and pricing info. Uses Flask(python) and MongoDB on backend. See planning diagram [here](https://drive.google.com/file/d/1qHuE3VXwZCBMh6_zeaUHdVtxZX8MxZc0/view?usp=sharing).
 
 ## To Run
 
