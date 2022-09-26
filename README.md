@@ -72,3 +72,17 @@ This repo includes integration testing via Postman Collections. These are run as
 This repo includes a Postman Collection that can be [imported to Postman](https://learning.postman.com/docs/getting-started/importing-and-exporting-data/) or run via [Newman CLI](https://www.npmjs.com/package/newman)
 
 You will want to use the `/postman/environments/MyRetailAPI.postman_environment.json` for running outside of Docker Compose environment to run the collection.
+
+## Notes on Productionizing
+
+This API is not currently production ready. A few things to note on productionizing:
+
+* docker-compose defaults are currently set to run in debug mode w/ live reloading
+* running in dev server, should be behind proxy, ie w/ nginx + gunicorn
+* implement metrics/observability
+* implement circut breakers between services (ie calls to redsky api)
+* requests to internal apis currently sent over public http
+* cache data from db + redsky apis
+* background workers?
+* strengthen testing + unit tests
+* ci/cd deploy chain
