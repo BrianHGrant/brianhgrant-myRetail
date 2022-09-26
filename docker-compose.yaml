@@ -4,6 +4,8 @@ services:
     build:
       context: api
       dockerfile: Dockerfile
+      args:
+        requirements: requirements.txt
     entrypoint:
       - flask
       - run
@@ -35,3 +37,15 @@ services:
       - ./mongodb/init-db.js:/docker-entrypoint-initdb.d/init-db.js:ro
     ports:
       - 27017:27017
+  newman-test:
+    build: postman
+
+    command:
+        run MyRetailAPI.postman_collection.json
+        -e environments/MyRetailAPI.postman_docker_environment.json 
+        -r cli
+    
+    volumes:
+        - ./postman:/etc/newman
+    depends_on:
+      - api

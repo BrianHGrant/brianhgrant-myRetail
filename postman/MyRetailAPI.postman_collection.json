@@ -1,0 +1,167 @@
+{
+	"info": {
+		"_postman_id": "9e3feed2-ac32-42e2-b782-040b7a0de6a9",
+		"name": "MyRetailAPI",
+		"description": "MyRetail Prices API for providing product and price details",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "ping - GET",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "769fd771-e046-470e-a452-1fb6d1bd45c2",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Test Ping Response\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData[\"hello\"]).to.eql(\"in there\");",
+							"});",
+							"pm.test(\"Content-Type is present\", function () {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{HOST}}/ping",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"ping"
+					]
+				},
+				"description": "GET ping endpoint"
+			},
+			"response": []
+		},
+		{
+			"name": "product/{id} - GET",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "d2b10a98-a0b2-41c0-a4bc-bae1fdc0205d",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"",
+							"pm.test(\"Content-Type is present\", function () {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"});",
+							"const schema = {",
+							"    \"type\": \"object\",",
+							"    \"properties\": {",
+							"        \"current_price\": { ",
+							"            \"type\": \"object\",",
+							"            \"properties\": {",
+							"              \"value\": { \"type\": \"number\" },",
+							"              \"currency_code\": { \"type\": \"string\" }",
+							"            }",
+							"        },",
+							"        \"id\": { \"type\": \"number\" },",
+							"        \"title\": { \"type\": \"string\" }",
+							"    },",
+							"    \"required\": [\"current_price\"]",
+							"};",
+							"",
+							"pm.test('Schema is valid', function() {",
+							"  pm.response.to.have.jsonSchema(schema);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{HOST}}/product/:id",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"product",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "13860428"
+						}
+					]
+				},
+				"description": "Gets a product's title and pricing info by id\n"
+			},
+			"response": []
+		},
+		{
+			"name": "product/{id} - GET (Not Found)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "d2b10a98-a0b2-41c0-a4bc-bae1fdc0205d",
+						"exec": [
+							"pm.test(\"Status code is 404\", function () {",
+							"    pm.response.to.have.status(404);",
+							"});",
+							"pm.test(\"Not Found Response Body is Correct\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.eql({'error': 'Not Found'});",
+							"});",
+							"",
+							"const schema = {",
+							"    \"type\": \"object\",",
+							"    \"properties\": {",
+							"        \"error\": { \"type\": \"string\" }",
+							"    }",
+							"}",
+							"",
+							"pm.test('Schema is valid', function() {",
+							"    pm.response.to.have.jsonSchema(schema);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{HOST}}/product/:id",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"product",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "99999999999"
+						}
+					]
+				},
+				"description": "404 Not Found request for products id"
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
