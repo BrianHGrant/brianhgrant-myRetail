@@ -22,14 +22,7 @@ db = LocalProxy(get_db)
 
 def get_price(product_id):
     try:
-        pipeline = [
-            {
-                "$match": {
-                    "product_id": product_id
-                }
-            }
-        ]
-        price = db.prices.aggregate(pipeline).next()
+        price = db.prices.find_one({"product_id": product_id})
         return price
     except Exception as e:
         return e

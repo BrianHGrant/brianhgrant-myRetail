@@ -1,0 +1,14 @@
+{
+	"id": "289e2215-5889-4cf6-b5ec-4ab379f48e12",
+	"name": "MyRetailAPI",
+	"values": [
+		{
+			"key": "HOST",
+			"value": "http://api:5000",
+			"enabled": true
+		}
+	],
+	"_postman_variable_scope": "environment",
+	"_postman_exported_at": "2022-09-26T02:42:21.097Z",
+	"_postman_exported_using": "Postman/7.13.0"
+}

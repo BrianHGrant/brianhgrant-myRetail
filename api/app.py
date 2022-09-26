@@ -2,14 +2,36 @@ import logging
 import os
 from flask import Flask, jsonify
 from flask_pymongo import PyMongo
+from pymongo.errors import DuplicateKeyError
 
 from redskyclient import RedSkyClient
-from db import get_price, update_price_db, create_price_db
+from db import get_price, update_price_db
 
 
 app = Flask(__name__)
-app.config["MONGO_URI"] = os.environ['MONGODB_CONNSTRING']
+
+try:
+    app.config["MONGO_URI"] = os.environ['MONGODB_CONNSTRING']
+except KeyError:
+    pass
+
 redskyclient = RedSkyClient()
+
+
+@app.errorhandler(404)
+def resource_not_found(e):
+    """
+    An error-handler to ensure that 404 errors are returned as JSON.
+    """
+    return jsonify(error=str(e)), 404
+
+
+@app.errorhandler(DuplicateKeyError)
+def duplicate_resource_found(e):
+    """
+    An error-handler to ensure that MongoDB duplicate key errors are returned as JSON.
+    """
+    return jsonify(error=f"Duplicate key error."), 400
 
 
 @app.route('/product/<int:id>', methods=['GET'])
@@ -20,7 +42,7 @@ def get_product(id):
         price = get_price(id)
         return jsonify(
                         {
-                            "id": product["tcin"],
+                            "id": int(product["tcin"]),
                             "title": product["item"]['product_description']['title'],
                             "current_price": {
                                 "value": price['value'],
@@ -30,10 +52,14 @@ def get_product(id):
                     ), 200
     except KeyError:
         if response['status_code'] == 404:
-            return jsonify({"error": "Not Found"}), 404
+            return jsonify(error="Not Found"), 404
 
 
-# @app.route('/product/<int:id>/price', methods=['PUT'])
+@app.route('/ping', methods=['GET'])
+def ping():
+    return jsonify(hello='in there'), 200
+
+# @app.route('/product/<int:id>', methods=['PUT'])
 # def update_price(id):
 #     try:
 #         update_price_db(id, price=20.54)
